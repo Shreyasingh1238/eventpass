@@ -1,0 +1,47 @@
+[
+  {
+    "id": "e1",
+    "title": "Future of Web Summit",
+    "banner": "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1600&q=80",
+    "description": "A virtual summit covering modern frontend architecture and performance workflows.",
+    "date": "2026-05-12",
+    "venue": "Zoom Arena",
+    "mode": "Virtual",
+    "price": 49,
+    "category": "Web"
+  },
+  {
+    "id": "e2",
+    "title": "AI Builder Bootcamp",
+    "banner": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1600&q=80",
+    "description": "Hands-on AI product labs with practical deployment sessions.",
+    "date": "2026-06-08",
+    "venue": "San Francisco Expo Center",
+    "mode": "Hybrid",
+    "price": 99,
+    "category": "AI"
+  },
+  {
+    "id": "e3",
+    "title": "Cloud Security Live",
+    "banner": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=80",
+    "description": "Security-focused conference on cloud governance and zero-trust systems.",
+    "date": "2026-07-01",
+    "venue": "Global Tech Hall",
+    "mode": "Live",
+    "price": 129,
+    "category": "Security"
+  },
+  {
+    "id": "e4",
+    "title": "Product Design Pulse",
+    "banner": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80",
+    "description": "UX experts share workflows for scalable design systems and team velocity.",
+    "date": "2026-08-19",
+    "venue": "Online",
+    "mode": "Virtual",
+    "price": 39,
+    "category": "Design"
+  }
+]
+

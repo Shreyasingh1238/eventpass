@@ -5,24 +5,24 @@ add motion and animatoin , scroling effect
 ❤️✅
 1) Dark/Light mode toggle✅
 2) Responsive design for mobile and desktop
-3)9️⃣ Animated Charts in Admin Panel
+3)9️⃣ Animated Charts in Admin Panel✅
 
 Counter animation (0 → 150 tickets sold)
 
-Animated bar growth
+Animated bar growthv✅
 
-Pie chart reveal animation
+Pie chart reveal animation✅
 
 Use:
 
 Recharts + motion
 
-4)Page Transition Animation (Like App)
+4)Page Transition Animation (Like App)✅
 
 
 5)6️⃣ Micro Interactions Everywhere✅
 
-Small animations that feel premium:
+Small animations that feel premium:✅
 
 Input focus glow✅
 
@@ -44,11 +44,11 @@ These small things impress teachers.
 
 Add:
 
-3D tilt on mouse move
+3D tilt on mouse move✅
 
-Smooth hover lift
+Smooth hover lift✅
 
-Subtle glow border
+Subtle glow border✅
 
 Use:
 
@@ -92,7 +92,7 @@ This alone makes it look premium.
 
 10) ad the tag as hey admin , hey volunteer, hey user (name ) (in the dashboard and home page)✅
 
-11)event feedback form with animated rating stars and submit button
+11)event feedback form with animated rating stars and submit button✅
 
 
 
@@ -108,9 +108,9 @@ Add one special section to the presentation that highlights the unique features 
 
 Add:
 
-Scroll progress indicator
+Scroll progress indicator✅
 
-Animated page transitions
+Animated page transitions✅
 
 Toast notifications
 

@@ -232,7 +232,7 @@ const analyticsOverview = asyncHandler(async (_req, res) => {
 });
 
 const analyticsCharts = asyncHandler(async (_req, res) => {
-  const [eventsVsTickets, ticketsOverTime, eventCategoryDistribution, users, volunteerStatusRows] = await Promise.all([
+  const [eventsVsTickets, ticketsOverTime, ticketsByEventDate, eventCategoryDistribution, buyerAges, volunteerStatusRows] = await Promise.all([
     Ticket.aggregate([
       {
         $lookup: {
@@ -257,11 +257,52 @@ const analyticsCharts = asyncHandler(async (_req, res) => {
       { $project: { date: '$_id', tickets: 1, _id: 0 } },
       { $sort: { date: 1 } }
     ]),
-    Event.aggregate([
-      { $group: { _id: '$category', value: { $sum: 1 } } },
+    Ticket.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event'
+        }
+      },
+      { $unwind: '$event' },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$event.date' } },
+          tickets: { $sum: 1 }
+        }
+      },
+      { $project: { date: '$_id', tickets: 1, _id: 0 } },
+      { $sort: { date: 1 } }
+    ]),
+    Ticket.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event'
+        }
+      },
+      { $unwind: '$event' },
+      { $group: { _id: '$event.category', value: { $sum: 1 } } },
+      { $sort: { value: -1 } },
       { $project: { name: '$_id', value: 1, _id: 0 } }
     ]),
-    User.find({ role: 'user' }, 'age').lean(),
+    Ticket.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'buyer'
+        }
+      },
+      { $unwind: '$buyer' },
+      { $match: { 'buyer.role': 'user' } },
+      { $project: { age: '$buyer.age' } }
+    ]),
     User.aggregate([
       { $match: { role: 'volunteer' } },
       { $group: { _id: '$volunteerStatus', value: { $sum: 1 } } },
@@ -276,22 +317,24 @@ const analyticsCharts = asyncHandler(async (_req, res) => {
     { name: '35+', min: 36, max: 120, value: 0 }
   ];
 
-  users.forEach((user) => {
-    const age = Number(user.age || 0);
+  buyerAges.forEach((buyer) => {
+    const age = Number(buyer.age || 0);
     const bucket = ageBuckets.find((item) => age >= item.min && age <= item.max);
     if (bucket) bucket.value += 1;
   });
 
   const donutVolunteerStatus = [
     { name: 'accepted', value: volunteerStatusRows.find((row) => row.name === 'accepted')?.value || 0 },
-    { name: 'pending', value: volunteerStatusRows.find((row) => row.name === 'pending')?.value || 0 }
+    { name: 'pending', value: volunteerStatusRows.find((row) => row.name === 'pending')?.value || 0 },
+    { name: 'rejected', value: volunteerStatusRows.find((row) => row.name === 'rejected')?.value || 0 }
   ];
+  const ticketsOverTimeFinal = ticketsOverTime.length > 1 ? ticketsOverTime : ticketsByEventDate;
 
   res.json({
     success: true,
     data: {
       eventsVsTickets,
-      ticketsOverTime,
+      ticketsOverTime: ticketsOverTimeFinal,
       eventCategoryDistribution,
       userAgeHistogram: ageBuckets.map(({ name, value }) => ({ name, value })),
       volunteerStatusDonut: donutVolunteerStatus

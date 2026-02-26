@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
+const QRCode = require('qrcode');
 const connectDB = require('../config/db');
 const User = require('../models/User');
 const Event = require('../models/Event');
@@ -21,8 +22,25 @@ const ageRanges = [
   [36, 50]
 ];
 const genders = ['male', 'female', 'other'];
+const categoryDemandWeights = {
+  AI: 0.3,
+  Concert: 0.25,
+  Dance: 0.2,
+  Singing: 0.15,
+  'Fashion Show': 0.1
+};
 
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const pickWeighted = (items, getWeight) => {
+  const total = items.reduce((sum, item) => sum + Math.max(0, Number(getWeight(item)) || 0), 0);
+  if (!total) return items[rand(0, items.length - 1)];
+  let cursor = Math.random() * total;
+  for (const item of items) {
+    cursor -= Math.max(0, Number(getWeight(item)) || 0);
+    if (cursor <= 0) return item;
+  }
+  return items[items.length - 1];
+};
 
 const run = async () => {
   await connectDB();
@@ -92,18 +110,25 @@ const run = async () => {
   );
 
   const ticketsPayload = Array.from({ length: 320 }).map((_, i) => {
-    const event = events[rand(0, events.length - 1)];
+    const event = pickWeighted(events, (item) => categoryDemandWeights[item.category] || 0.05);
     const user = users[rand(0, users.length - 1)];
     const checkedIn = Math.random() > 0.35;
+    const createdAt = new Date(Date.now() - rand(0, 45) * 24 * 60 * 60 * 1000);
     return {
       ticketId: generateTicketId(),
       userId: user._id,
       eventId: event._id,
-      qrCode: 'data:image/png;base64,seed',
+      qrCode: '',
       checkedIn,
-      checkInTime: checkedIn ? new Date(Date.now() - rand(0, 6) * 24 * 60 * 60 * 1000) : null
+      checkInTime: checkedIn ? new Date(createdAt.getTime() + rand(0, 5) * 24 * 60 * 60 * 1000) : null,
+      createdAt,
+      updatedAt: createdAt
     };
   });
+  for (const ticket of ticketsPayload) {
+    const payload = JSON.stringify({ t: ticket.ticketId, e: String(ticket.eventId), ts: Date.now() });
+    ticket.qrCode = await QRCode.toDataURL(payload);
+  }
 
   const tickets = await Ticket.insertMany(ticketsPayload);
 

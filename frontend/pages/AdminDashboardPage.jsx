@@ -7,6 +7,7 @@ import {
   Cell,
   Line,
   LineChart,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -37,9 +38,10 @@ const tooltipStyle = {
 
 const CustomTooltip = ({ active, label, payload }) => {
   if (!active || !payload || !payload.length) return null
+  const title = label || payload?.[0]?.name || payload?.[0]?.payload?.name || ''
   return (
     <div style={tooltipStyle} className="px-3 py-2 text-sm">
-      <p className="text-slate-100">{label}</p>
+      <p className="text-slate-100">{title}</p>
       {payload.map((item) => (
         <p key={item.dataKey} style={{ color: item.color || '#67e8f9' }}>
           {item.dataKey}: {item.value}
@@ -48,6 +50,8 @@ const CustomTooltip = ({ active, label, payload }) => {
     </div>
   )
 }
+
+const pieLabel = ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`
 
 const Counter = ({ value, prefix = '', suffix = '' }) => {
   const [display, setDisplay] = useState(0)
@@ -250,7 +254,7 @@ const AdminDashboardPage = ({ currentUser }) => {
             </div>
 
             <div className="glass rounded-2xl p-4">
-              <h3 className="mb-4 text-lg font-semibold text-white">Event Category Distribution</h3>
+              <h3 className="mb-4 text-lg font-semibold text-white">Ticket Share by Category</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -259,7 +263,8 @@ const AdminDashboardPage = ({ currentUser }) => {
                       dataKey="value"
                       nameKey="name"
                       outerRadius={85}
-                      label
+                      label={pieLabel}
+                      labelLine={false}
                       animationDuration={1000}
                     >
                       {(charts.eventCategoryDistribution || []).map((entry, index) => (
@@ -267,6 +272,7 @@ const AdminDashboardPage = ({ currentUser }) => {
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
+                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -299,13 +305,15 @@ const AdminDashboardPage = ({ currentUser }) => {
                       innerRadius={80}
                       outerRadius={120}
                       animationDuration={1000}
-                      label
+                      label={pieLabel}
+                      labelLine={false}
                     >
                       {(charts.volunteerStatusDonut || []).map((entry, index) => (
-                        <Cell key={entry.name} fill={index === 0 ? '#10b981' : '#f59e0b'} />
+                        <Cell key={entry.name} fill={index === 0 ? '#10b981' : index === 1 ? '#f59e0b' : '#ef4444'} />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
+                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>

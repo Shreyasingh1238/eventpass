@@ -76,6 +76,11 @@ export const fetchMyTickets = async () => {
   return data
 }
 
+export const refreshTicketQr = async (ticketId) => {
+  const { data } = await api.patch(`/tickets/${ticketId}/refresh-qr`)
+  return data
+}
+
 export const verifyCheckin = async (ticketId) => {
   const { data } = await api.post('/checkin/verify', { ticketId })
   return data
